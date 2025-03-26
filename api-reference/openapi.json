@@ -762,15 +762,14 @@
                                 "example": {
                                     "message": "Api key is deleted successfully.",
                                     "data": {
-                                        "_id": "67c97464ae3d19dc2bbff05d",
+                                        "_id": "67c52a1526865c41a282c4e9",
                                         "teamId": "67a2ea1d828c9098134e7b92",
-                                        "firstName": "john",
-                                        "lastName": "Doe",
-                                        "email": "john.doe@example.com",
-                                        "password": "$2b$10$I9NsnI5BWvwXXFAGLnsAs.DSUNKGoVHEYPkx.lxhT12W7rjypM/pG",
-                                        "createdAt": "2025-03-06T10:09:40.301Z",
-                                        "updatedAt": "2025-03-25T08:26:23.653Z",
-                                        "__v": 0
+                                        "name": "Suresh",
+                                        "key": "3289e233-93f7-411e-9d06-308c26fc278f",
+                                        "createdAt": "2025-03-03T03:58:10.357+00:00",
+                                        "expiresAt": "2025-03-10T04:03:33.131+00:00",
+                                        "uuid": "67af1bcea4f8dca74f0d51b0",
+                                        "isPublic": true
                                     }
                                 }
                             }
