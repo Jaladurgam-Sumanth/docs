@@ -1,217 +1,609 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
-  "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenAPI Developer Portal",
+        "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+        "license": {
+            "name": "MIT"
         },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
+        "version": "1.0.0"
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
+    "servers": [
+        {
+            "url": "https://e029-202-53-12-234.ngrok-free.app"
         }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "paths": {
+        "/auth/users": {
+            "get": {
+                "description": "Returns all users from the system that the user has access to",
+                "responses": {
+                    "200": {
+                        "description": "Get User Details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                },
+                                "example": [
+                                    {
+                                        "message": "User Listed Successfully",
+                                        "data": {
+                                            "_id": "5f43a9f4f36d287b3f9e6b4b",
+                                            "teamId": "5f43a9f4f36d287b3f9e6b3h",
+                                            "firstName": "John",
+                                            "lastName": "Doe",
+                                            "email": "john.doe@example.com",
+                                            "password": "securepassword123",
+                                            "createdAt": "2025-02-06T10:05:15.793Z",
+                                            "updatedAt": "2025-02-07T10:05:15.793Z"
+                                        }
+                                    },
+                                    {
+                                        "_id": "5f43a9f4f36d287b3f9e6b4c",
+                                        "teamId": "5f43a9f4f36d287b3f9e6b3h",
+                                        "firstName": "Jane",
+                                        "lastName": "Smith",
+                                        "email": "jane.smith@example.com",
+                                        "password": "anotherpassword456",
+                                        "createdAt": "2025-02-07T10:05:15.793Z",
+                                        "updatedAt": "2025-02-07T10:05:15.793Z"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new user",
+                "requestBody": {
+                    "description": "Plant to add to the store",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "User is created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NewUser"
+                                },
+                                "example": {
+                                    "message": "User Created Successfully",
+                                    "data": {
+                                        "_id": "5f43a9f4f36d287b3f9e6b4b",
+                                        "teamId": "5f43a9f4f36d287b3f9e6b3h",
+                                        "firstName": "John",
+                                        "lastName": "Doe",
+                                        "email": "john.doe@example.com",
+                                        "password": "securepassword123",
+                                        "createdAt": "2025-02-07T10:05:15.793Z",
+                                        "updatedAt": "2025-02-07T10:05:15.793Z"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-          }
         },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
+        "/auth/users/{id}": {
+            "get": {
+                "description": "Retrieve a single user by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "example": {
+                                    "message": "User Listed Successfully",
+                                    "data": {
+                                        "_id": "67c97464ae3d19dc2bbff05d",
+                                        "teamId": "67a2ea1d828c9098134e7b92",
+                                        "firstName": "john",
+                                        "lastName": "Doe",
+                                        "email": "john.doe@example.com",
+                                        "password": "$2b$10$I9NsnI5BWvwXXFAGLnsAs.DSUNKGoVHEYPkx.lxhT12W7rjypM/pG",
+                                        "createdAt": "2025-03-06T10:09:40.301Z",
+                                        "updatedAt": "2025-03-25T08:26:23.653Z",
+                                        "__v": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update a user by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "User data to update",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "firstName": {
+                                        "type": "string",
+                                        "description": "First name of the user"
+                                    },
+                                    "lastName": {
+                                        "type": "string",
+                                        "description": "Last name of the user"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "description": "Email address of the user",
+                                        "format": "email"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "firstname": "john",
+                                "lastname": "Doe",
+                                "email": "john.doe@example.com"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "example": {
+                                    "_id": "67c97464ae3d19dc2bbff05d",
+                                    "teamId": "67a2ea1d828c9098134e7b92",
+                                    "firstName": "john",
+                                    "lastName": "Doe",
+                                    "email": "john.doe@example.com",
+                                    "password": "$2b$10$I9NsnI5BWvwXXFAGLnsAs.DSUNKGoVHEYPkx.lxhT12W7rjypM/pG",
+                                    "createdAt": "2025-03-06T10:09:40.301Z",
+                                    "updatedAt": "2025-03-25T08:26:23.653Z",
+                                    "__v": 0
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "example": {
+                                    "message": "User is Deleted Successfully"
+                                }
+                            }
+                        }
+                    }
+                }
             }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
+        },
+        "/docs/uploads": {
+            "get": {
+                "description": "Returns all users from the system that the user has access to",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "The number of items to return per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to retrieve",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Files Details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UploadResponse"
+                                    }
+                                },
+                                "example": {
+                                    "message": "Files Listed Successfully",
+                                    "data": [
+                                        {
+                                            "_id": "67b826d08e3763327b9ab36d",
+                                            "teamId": "67a2ea1d828c9098134e7b92",
+                                            "originalName": "0.5_0.05_3.0_female_male_no_overlap_bnc_0_1.wav",
+                                            "fileType": "audio file",
+                                            "status": "completed",
+                                            "createdAt": "2025-02-21T07:10:08.707Z",
+                                            "updatedAt": "2025-02-21T07:10:19.297Z",
+                                            "__v": 0,
+                                            "filename": "e2edcfee-263a-4c89-b3f5-28be5b293df9-0.5_0.05_3.0_female_male_no_overlap_bnc_0_1.wav",
+                                            "path": "https://sample/uploads/e2edcfee-263a-4c89-b3f5-28be5b293df9-0.5_0.05_3.0.wav"
+                                        },
+                                        {
+                                            "_id": "67b826d08e3133327b9ab36d",
+                                            "teamId": "67a2ea1d828c9098134e7b92",
+                                            "originalName": "0.5_0.05_3.0_female_male_no_overlap_bnc_0_1.wav",
+                                            "fileType": "audio file",
+                                            "status": "completed",
+                                            "createdAt": "2025-02-21T07:10:08.707Z",
+                                            "updatedAt": "2025-02-21T07:10:19.297Z",
+                                            "__v": 0,
+                                            "filename": "e2edcfee-263a-4c89-b3f5-28be5b293df9-0.5_0.05_3.0_female_male_no_overlap_bnc_0_1.wav",
+                                            "path": "https://sample/uploads/e2edcfee-263a-4c89-b3f5-28be5b293df9-0.5_0.05_3.0.wav"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Upload a file",
+                "parameters": [
+                    {
+                        "name": "mvns",
+                        "in": "query",
+                        "description": "The number of items to return per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "dgc",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "bvs",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+
+                ],
+                "requestBody": {
+                    "description": "File to upload",
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Upload"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "File is uploaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Upload"
+                                },
+                                "example": {
+                                    "message": "File is uploaded successfully and will be processed shortly."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/docs/uploads/{id}": {
+            "get": {
+                "description": "Download a file by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the file to download",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/download"
+                                },
+                                "example": {
+                                    "status": true,
+                                    "message": "Signed URL generated successfully.",
+                                    "signedUrl": "https://sample.com/uploads/e2edcfee-263a-4c89-b3f5-28be5b293df9-0.5_0.05_"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Audio file is deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteUpload"
+                                },
+                                "example": {
+                                    "status": true,
+                                    "message": "Audio file deleted successfully."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      }
+    "webhooks": {
+        "/plant/webhook": {
+            "post": {
+                "description": "Information about a new plant added to the store",
+                "requestBody": {
+                    "description": "Plant added to the store",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Return a 200 status to indicate that the data was received successfully"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "required": ["firstName", "lastName", "email", "password"],
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "description": "The first name of the user",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "The last name of the user",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "The email of the user",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "The password of the user",
+                        "type": "string"
+                    }
+                }
+            },
+            "NewUser": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    {
+                        "required": ["id"],
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "description": "Identification number of the plant",
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "teamId": {
+                                "description": "Team ID that the user belongs to",
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "createdAt": {
+                                "description": "Date and time when the User was added to the store",
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "updatedAt": {
+                                "description": "Date and time when the user was last updated",
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Upload": {
+                "required": ["file"],
+                "properties": {
+                    "file": {
+                        "type": "string",
+                        "format": "binary"
+                    }
+                }
+            },
+            "UploadResponse": {
+                "required": ["id", "status"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "teamId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "originalName": {
+                        "type": "string"
+                    },
+                    "fileType": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["uploaded", "processing", "completed"]
+                    },
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "description": "Date and time when the File was uploaded",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "DeleteUpload": {
+                "properties": {
+                    "status": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "download": {
+                "required": ["status", "message", "signedUrl"],
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "signedUrl": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Error": {
+                "required": ["error", "message"],
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
     }
-  }
 }

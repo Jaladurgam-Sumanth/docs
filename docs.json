@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Meeami Technologies",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -44,12 +44,21 @@
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Users",
             "pages": [
               "api-reference/endpoint/get",
               "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/getuser",
+              "api-reference/endpoint/update",
+              "api-reference/endpoint/delete"
+            ]
+          },{
+            "group": "Uploads",
+            "pages": [
+              "api-reference/upload/get",
+              "api-reference/upload/create",
+              "api-reference/upload/getupload",
+              "api-reference/upload/delete"
             ]
           }
         ]
