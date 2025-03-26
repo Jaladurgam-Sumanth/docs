@@ -60,6 +60,16 @@
               "api-reference/upload/getupload",
               "api-reference/upload/delete"
             ]
+          },
+          {
+            "group": "Api Keys",
+            "pages": [
+              "api-reference/apikeys/get",
+              "api-reference/apikeys/create",
+              "api-reference/apikeys/getapikey",
+              "api-reference/apikeys/update",
+              "api-reference/apikeys/delete"
+            ]
           }
         ]
       }

@@ -343,7 +343,6 @@
                             "default": 0
                         }
                     }
-
                 ],
                 "requestBody": {
                     "description": "File to upload",
@@ -429,6 +428,350 @@
                                 "example": {
                                     "status": true,
                                     "message": "Audio file deleted successfully."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/apikeys": {
+            "get": {
+                "description": "Returns all api keys from the system that the user has access to",
+                "responses": {
+                    "200": {
+                        "description": "Api Keys Details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ApiKeys"
+                                    }
+                                },
+                                "example": {
+                                    "message": "Api keys are Listed Successfully",
+                                    "data": [
+                                        {
+                                            "_id": "67c52a1526865c41a282c4e9",
+                                            "teamId": "67a2ea1d828c9098134e7b92",
+                                            "name": "Suresh",
+                                            "key": "3289e233-93f7-411e-9d06-308c26fc278f",
+                                            "createdAt": "2025-03-03T03:58:10.357+00:00",
+                                            "expiresAt": "2025-03-10T04:03:33.131+00:00",
+                                            "uuid": "67af1bcea4f8dca74f0d51b0",
+                                            "isPublic": true
+                                        },
+                                        {
+                                            "_id": "67c52a1526865c41a282c4e0",
+                                            "teamId": "67a2ea1d828c9098134e7b91",
+                                            "name": "John",
+                                            "key": "3289e233-93f7-411e-9d06-308c26fc278g",
+                                            "createdAt": "2025-03-03T03:58:10.357+00:00",
+                                            "expiresAt": "2025-03-10T04:03:33.131+00:00",
+                                            "uuid": "67af1bcea4f8dca74f0d51b0",
+                                            "isPublic": true
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new API key",
+                "requestBody": {
+                    "description": "API key details to be created",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name of the API key."
+                                    },
+                                    "isPublic": {
+                                        "type": "boolean",
+                                        "description": "Whether the API key is public."
+                                    },
+                                    "allowedOrigins": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "List of allowed origins (only required if isPublic is false)."
+                                    }
+                                },
+                                "required": ["name", "isPublic"],
+                                "oneOf": [
+                                    {
+                                        "properties": {
+                                            "isPublic": {
+                                                "enum": [true]
+                                            }
+                                        },
+                                        "required": []
+                                    },
+                                    {
+                                        "properties": {
+                                            "isPublic": {
+                                                "enum": [false]
+                                            },
+                                            "allowedOrigins": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "minItems": 1,
+                                                "description": "Allowed origins must be provided if the API key is not public."
+                                            }
+                                        },
+                                        "required": ["allowedOrigins"]
+                                    }
+                                ]
+                            },
+                            "example": {
+                                "name": "Suresh",
+                                "isPublic": true
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "API Key created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "_id": {
+                                            "type": "string"
+                                        },
+                                        "teamId": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "key": {
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "expiresAt": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "uuid": {
+                                            "type": "string"
+                                        },
+                                        "isPublic": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "message": "API key is created successfully",
+                                    "data": {
+                                        "_id": "67c52a1526865c41a282c4e9",
+                                        "teamId": "67a2ea1d828c9098134e7b92",
+                                        "name": "Suresh",
+                                        "key": "3289e233-93f7-411e-9d06-308c26fc278f",
+                                        "createdAt": "2025-03-03T03:58:10.357+00:00",
+                                        "expiresAt": "2025-03-10T04:03:33.131+00:00",
+                                        "uuid": "67af1bcea4f8dca74f0d51b0",
+                                        "isPublic": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/apikeys/{id}": {
+            "get": {
+                "description": "fetch a apikey by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the file to download",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Apikey details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiKeys"
+                                },
+                                "example": {
+                                    "message": "API key is listed successfully",
+                                    "data": {
+                                        "_id": "67c52a1526865c41a282c4e9",
+                                        "teamId": "67a2ea1d828c9098134e7b92",
+                                        "name": "Suresh",
+                                        "key": "3289e233-93f7-411e-9d06-308c26fc278f",
+                                        "createdAt": "2025-03-03T03:58:10.357+00:00",
+                                        "expiresAt": "2025-03-10T04:03:33.131+00:00",
+                                        "uuid": "67af1bcea4f8dca74f0d51b0",
+                                        "isPublic": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update a user by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "API key details to be created",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name of the API key."
+                                    },
+                                    "isPublic": {
+                                        "type": "boolean",
+                                        "description": "Whether the API key is public."
+                                    },
+                                    "allowedOrigins": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "List of allowed origins (only required if isPublic is false)."
+                                    },
+                                    "expiresAt": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "description": "Expiration date of the API key."
+                                    }
+                                },
+                                "required": ["name", "isPublic"],
+                                "oneOf": [
+                                    {
+                                        "properties": {
+                                            "isPublic": {
+                                                "enum": [true]
+                                            }
+                                        },
+                                        "required": []
+                                    },
+                                    {
+                                        "properties": {
+                                            "isPublic": {
+                                                "enum": [false]
+                                            },
+                                            "allowedOrigins": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "minItems": 1,
+                                                "description": "Allowed origins must be provided if the API key is not public."
+                                            }
+                                        },
+                                        "required": ["allowedOrigins"]
+                                    }
+                                ]
+                            },
+                            "example": {
+                                "name": "Suresh",
+                                "isPublic": true
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiKeys"
+                                },
+                                "example": {
+                                    "message": "API key is updated successfully",
+                                    "data": {
+                                        "_id": "67c52a1526865c41a282c4e9",
+                                        "teamId": "67a2ea1d828c9098134e7b92",
+                                        "name": "Suresh",
+                                        "key": "3289e233-93f7-411e-9d06-308c26fc278f",
+                                        "createdAt": "2025-03-03T03:58:10.357+00:00",
+                                        "expiresAt": "2025-03-10T04:03:33.131+00:00",
+                                        "uuid": "67af1bcea4f8dca74f0d51b0",
+                                        "isPublic": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Api key is deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiKeys"
+                                },
+                                "example": {
+                                    "message": "Api key is deleted successfully.",
+                                    "data": {
+                                        "_id": "67c97464ae3d19dc2bbff05d",
+                                        "teamId": "67a2ea1d828c9098134e7b92",
+                                        "firstName": "john",
+                                        "lastName": "Doe",
+                                        "email": "john.doe@example.com",
+                                        "password": "$2b$10$I9NsnI5BWvwXXFAGLnsAs.DSUNKGoVHEYPkx.lxhT12W7rjypM/pG",
+                                        "createdAt": "2025-03-06T10:09:40.301Z",
+                                        "updatedAt": "2025-03-25T08:26:23.653Z",
+                                        "__v": 0
+                                    }
                                 }
                             }
                         }
@@ -582,6 +925,44 @@
                     },
                     "signedUrl": {
                         "type": "string"
+                    }
+                }
+            },
+            "ApiKeys": {
+                "required": ["id", "key", "name", "teamId", "uuid", "isPublic", "createdAt", "expiresAt"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "key": {
+                        "type": "string"
+                    },
+                    "teamId": {
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "isPublic": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "expiresAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "createApikey": {
+                "required": ["name", "isPublic"],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "isPublic": {
+                        "type": "boolean"
                     }
                 }
             },
