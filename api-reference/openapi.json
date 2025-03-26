@@ -349,7 +349,22 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/Upload"
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "The file to upload"
+                                    }
+                                },
+                                "required": [
+                                    "file"
+                                ]
+                            },
+                            "encoding": {
+                                "file": {
+                                    "contentType": "application/octet-stream"
+                                }
                             }
                         }
                     },
@@ -504,12 +519,17 @@
                                         "description": "List of allowed origins (only required if isPublic is false)."
                                     }
                                 },
-                                "required": ["name", "isPublic"],
+                                "required": [
+                                    "name",
+                                    "isPublic"
+                                ],
                                 "oneOf": [
                                     {
                                         "properties": {
                                             "isPublic": {
-                                                "enum": [true]
+                                                "enum": [
+                                                    true
+                                                ]
                                             }
                                         },
                                         "required": []
@@ -517,7 +537,9 @@
                                     {
                                         "properties": {
                                             "isPublic": {
-                                                "enum": [false]
+                                                "enum": [
+                                                    false
+                                                ]
                                             },
                                             "allowedOrigins": {
                                                 "type": "array",
@@ -528,7 +550,9 @@
                                                 "description": "Allowed origins must be provided if the API key is not public."
                                             }
                                         },
-                                        "required": ["allowedOrigins"]
+                                        "required": [
+                                            "allowedOrigins"
+                                        ]
                                     }
                                 ]
                             },
@@ -676,12 +700,17 @@
                                         "description": "Expiration date of the API key."
                                     }
                                 },
-                                "required": ["name", "isPublic"],
+                                "required": [
+                                    "name",
+                                    "isPublic"
+                                ],
                                 "oneOf": [
                                     {
                                         "properties": {
                                             "isPublic": {
-                                                "enum": [true]
+                                                "enum": [
+                                                    true
+                                                ]
                                             }
                                         },
                                         "required": []
@@ -689,7 +718,9 @@
                                     {
                                         "properties": {
                                             "isPublic": {
-                                                "enum": [false]
+                                                "enum": [
+                                                    false
+                                                ]
                                             },
                                             "allowedOrigins": {
                                                 "type": "array",
@@ -700,7 +731,9 @@
                                                 "description": "Allowed origins must be provided if the API key is not public."
                                             }
                                         },
-                                        "required": ["allowedOrigins"]
+                                        "required": [
+                                            "allowedOrigins"
+                                        ]
                                     }
                                 ]
                             },
@@ -804,7 +837,12 @@
     "components": {
         "schemas": {
             "User": {
-                "required": ["firstName", "lastName", "email", "password"],
+                "required": [
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "password"
+                ],
                 "type": "object",
                 "properties": {
                     "firstName": {
@@ -831,7 +869,9 @@
                         "$ref": "#/components/schemas/User"
                     },
                     {
-                        "required": ["id"],
+                        "required": [
+                            "id"
+                        ],
                         "type": "object",
                         "properties": {
                             "id": {
@@ -859,7 +899,9 @@
                 ]
             },
             "Upload": {
-                "required": ["file"],
+                "required": [
+                    "file"
+                ],
                 "properties": {
                     "file": {
                         "type": "string",
@@ -868,7 +910,10 @@
                 }
             },
             "UploadResponse": {
-                "required": ["id", "status"],
+                "required": [
+                    "id",
+                    "status"
+                ],
                 "type": "object",
                 "properties": {
                     "id": {
@@ -887,7 +932,11 @@
                     },
                     "status": {
                         "type": "string",
-                        "enum": ["uploaded", "processing", "completed"]
+                        "enum": [
+                            "uploaded",
+                            "processing",
+                            "completed"
+                        ]
                     },
                     "fileName": {
                         "type": "string"
@@ -913,7 +962,11 @@
                 }
             },
             "download": {
-                "required": ["status", "message", "signedUrl"],
+                "required": [
+                    "status",
+                    "message",
+                    "signedUrl"
+                ],
                 "type": "object",
                 "properties": {
                     "status": {
@@ -928,7 +981,16 @@
                 }
             },
             "ApiKeys": {
-                "required": ["id", "key", "name", "teamId", "uuid", "isPublic", "createdAt", "expiresAt"],
+                "required": [
+                    "id",
+                    "key",
+                    "name",
+                    "teamId",
+                    "uuid",
+                    "isPublic",
+                    "createdAt",
+                    "expiresAt"
+                ],
                 "type": "object",
                 "properties": {
                     "id": {
@@ -955,7 +1017,10 @@
                 }
             },
             "createApikey": {
-                "required": ["name", "isPublic"],
+                "required": [
+                    "name",
+                    "isPublic"
+                ],
                 "properties": {
                     "name": {
                         "type": "string"
@@ -966,7 +1031,10 @@
                 }
             },
             "Error": {
-                "required": ["error", "message"],
+                "required": [
+                    "error",
+                    "message"
+                ],
                 "type": "object",
                 "properties": {
                     "error": {
