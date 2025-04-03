@@ -1,0 +1,160 @@
+---
+title: 'Stream API Documentation'
+---
+
+### Key Points
+
+**URL Parameters:**
+- `sampleRate` (default: 16000)
+- `noiseSuppression` (0/1)
+- `gainControl` (0/1)
+- `backgroundVoiceSuppression` (0/1)
+
+**Authentication:**
+- **Backend:** Bearer token in the `Authorization` header
+- **Frontend:** API key in the first message
+
+---
+<CodeGroup>
+
+### Javascript Client
+```javascript Client.js
+// Frontend WebSocket Client (JavaScript)
+function connectWebSocket() {
+    const ws = new WebSocket('wss://api-dev.meeamitech.com/audio/v1/uploads/stream?sampleRate=16000&noiseSuppression=1&gainControl=1&backgroundVoiceSuppression=1');
+    
+    ws.onopen = function() {
+        console.log('WebSocket connection established');
+        // Send authentication as first message
+        ws.send(JSON.stringify({
+            type: 'auth',
+            apiKey: 'your-frontend-api-key'
+        }));
+    };
+
+    ws.onmessage = function(event) {
+        // Handle auth response
+        try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'auth') {
+                console.log('Auth status:', data.status);
+                return;
+            }
+            // Handle other messages
+        } catch (error) {
+            console.error('Error processing message:', error);
+        }
+    };
+
+    ws.onerror = function(error) {
+        console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = function(event) {
+        console.log('Connection closed:', event.code, event.reason);
+    };
+}
+```
+### Node Client
+```javascript Server.js
+// Backend WebSocket Client (Node.js)
+const WebSocket = require('ws');
+
+function connectToServer() {
+    const ws = new WebSocket('wss://api-dev.meeamitech.com/audio/v1/uploads/stream?gain=1', {
+        headers: {
+            'Authorization': 'Bearer your-backend-api-key'
+        },
+        rejectUnauthorized: true  // Enable SSL verification in production
+    });
+
+    ws.on('open', () => {
+        console.log('Connected to server');
+    });
+
+    ws.on('message', (data) => {
+        console.log('Received:', data);
+    });
+
+    ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
+    });
+
+    ws.on('close', (code, reason) => {
+        console.log(`Connection closed: ${code} - ${reason}`);
+    });
+}
+```
+
+```python client.py
+# Backend WebSocket Client (Python)
+import asyncio
+import websockets
+import json
+import ssl
+
+async def connect_to_server():
+    uri = "wss://api-dev.meeamitech.com/audio/v1/uploads/stream?sampleRate=16000&noiseSuppression=1&gainControl=1&backgroundVoiceSuppression=1"
+    ssl_context = ssl.create_default_context()
+    
+    headers = {
+        'Authorization': 'Bearer your-backend-api-key'
+    }
+    
+    async with websockets.connect(
+        uri,
+        extra_headers=headers,
+        ssl=ssl_context
+    ) as websocket:
+        try:
+            while True:
+                # Send data
+                await websocket.send(your_data)
+                
+                # Receive data
+                response = await websocket.recv()
+                print(f"Received: {response}")
+                
+        except websockets.exceptions.ConnectionClosed:
+            print("Connection closed")
+        except Exception as e:
+            print(f"Error: {e}")
+
+if __name__ == "__main__":
+    asyncio.run(connect_to_server())
+```
+
+```Java client.java
+// Backend WebSocket Client (Java)
+import java.net.URI;
+import javax.websocket.*;
+
+@ClientEndpoint
+public class WebSocketClient {
+    private Session session;
+    
+    public WebSocketClient() {
+        try {
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            ClientEndpointConfig config = ClientEndpointConfig.Builder.create()
+                .configurator(new ClientEndpointConfig.Configurator() {
+                    @Override
+                    public void beforeRequest(Map<String, List<String>> headers) {
+                        headers.put("Authorization", 
+                            Arrays.asList("Bearer your-backend-api-key"));
+                    }
+                }).build();
+            
+            container.connectToServer(this, 
+                config,
+                new URI("wss://api-dev.meeamitech.com/audio/v1/uploads/stream?sampleRate=16000&noiseSuppression=1&gainControl=1&backgroundVoiceSuppression=1"));
+                
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // ... rest of the implementation remains the same ...
+}
+```
+</CodeGroup>
