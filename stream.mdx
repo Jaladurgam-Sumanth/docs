@@ -15,7 +15,7 @@ title: 'Stream'
 - **Frontend:** API key in the first message
 
 ---
-<CodeGroup>
+### Frontend to Backend
 
 ```javascript Client.js
 // Frontend WebSocket Client (JavaScript)
@@ -55,7 +55,10 @@ function connectWebSocket() {
 }
 ```
 
-```javascript Server.js
+### Backend to Backend
+
+<CodeGroup>
+```javascript Node.js
 // Backend WebSocket Client (Node.js)
 const WebSocket = require('ws');
 
@@ -85,7 +88,7 @@ function connectToServer() {
 }
 ```
 
-```python client.py
+```python Python.py
 # Backend WebSocket Client (Python)
 import asyncio
 import websockets
@@ -123,7 +126,7 @@ if __name__ == "__main__":
     asyncio.run(connect_to_server())
 ```
 
-```Java client.java
+```Java Java.java
 // Backend WebSocket Client (Java)
 import java.net.URI;
 import javax.websocket.*;
