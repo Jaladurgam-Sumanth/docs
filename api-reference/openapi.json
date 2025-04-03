@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "https://c9db-202-53-12-234.ngrok-free.app"
+            "url": "https://628e-202-53-12-234.ngrok-free.app"
         }
     ],
     "security": [
@@ -19,7 +19,7 @@
         }
     ],
     "paths": {
-        "/auth/users": {
+        "/auth/v1/users": {
             "get": {
                 "description": "Returns all users from the system that the user has access to",
                 "responses": {
@@ -103,7 +103,7 @@
                 }
             }
         },
-        "/auth/users/{id}": {
+        "/auth/v1/users/{id}": {
             "get": {
                 "description": "Retrieve a single user by ID",
                 "parameters": [
@@ -242,7 +242,7 @@
                 }
             }
         },
-        "/docs/uploads": {
+        "/docs/v1/uploads": {
             "get": {
                 "description": "Returns all users from the system that the user has access to",
                 "parameters": [
@@ -387,7 +387,7 @@
                 }
             }
         },
-        "/docs/uploads/{id}": {
+        "/docs/v1/uploads/{id}": {
             "get": {
                 "description": "Download a file by ID",
                 "parameters": [
@@ -450,7 +450,7 @@
                 }
             }
         },
-        "/auth/apikeys": {
+        "/auth/v1/apikeys": {
             "get": {
                 "description": "Returns all api keys from the system that the user has access to",
                 "responses": {
@@ -619,7 +619,7 @@
                 }
             }
         },
-        "/auth/apikeys/{id}": {
+        "/auth/v1/apikeys/{id}": {
             "get": {
                 "description": "fetch a apikey by ID",
                 "parameters": [
