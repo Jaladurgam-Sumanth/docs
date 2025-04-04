@@ -20,104 +20,269 @@ title: 'Stream'
 
 <CodeGroup>
 ```javascript Node.js
-// Backend WebSocket Client (Node.js)
 const WebSocket = require('ws');
+const fs = require('fs');
+const wav = require('wav');
+const AudioContext = require('web-audio-api').AudioContext;
+const audioContext = new AudioContext();
 
-function connectToServer() {
-    const ws = new WebSocket('wss://api-dev.meeamitech.com/audio/v1/uploads/stream?gain=1', {
-        headers: {
-            'Authorization': 'Bearer your-backend-api-key'
-        },
-        rejectUnauthorized: true  // Enable SSL verification in production
-    });
+// Connection parameters
+const uri = 'wss://api-dev.meeamitech.com/audio/v1/uploads/stream?sampleRate=16000&noiseSuppression=1&gainControl=1&backgroundVoiceSuppression=1';
+const apiKey = 'YOUR_API_KEY';
 
-    ws.on('open', () => {
-        console.log('Connected to server');
-    });
+class AudioClient {
+    constructor() {
+        this.ws = new WebSocket(uri, {
+            headers: {
+                'Authorization': `Bearer ${apiKey}`
+            }
+        });
+        this.setupWebSocket();
+    }
 
-    ws.on('message', (data) => {
-        console.log('Received:', data);
-    });
+    setupWebSocket() {
+        this.ws.on('open', () => {
+            console.log('Connected to WebSocket server');
+        });
 
-    ws.on('error', (error) => {
-        console.error('WebSocket error:', error);
-    });
+        this.ws.on('message', (data) => {
+            console.log('Received processed audio chunk:', data.length, 'bytes');
+            // Handle processed audio...
+        });
 
-    ws.on('close', (code, reason) => {
-        console.log(`Connection closed: ${code} - ${reason}`);
-    });
+        this.ws.on('error', (error) => {
+            console.error('WebSocket error:', error);
+        });
+
+        this.ws.on('close', () => {
+            console.log('Connection closed');
+        });
+    }
+
+    // Example 1: Send raw PCM data
+    sendRawPCM() {
+        const audioBuffer = fs.readFileSync('input.raw');
+        this.sendInChunks(audioBuffer);
+    }
+
+    // Example 2: Send WAV file
+    sendWavFile() {
+        const reader = new wav.Reader();
+        const readStream = fs.createReadStream('input.wav');
+
+        reader.on('format', format => {
+            console.log('WAV format:', format);
+        });
+
+        reader.on('data', (chunk) => {
+            this.sendInChunks(chunk);
+        });
+
+        readStream.pipe(reader);
+    }
+
+    // Example 3: Send audio buffer
+    async sendAudioFile(filePath) {
+        const audioData = fs.readFileSync(filePath);
+        const audioBuffer = await audioContext.decodeAudioData(audioData.buffer);
+        const pcmData = this.convertToInt16(audioBuffer);
+        this.sendInChunks(pcmData);
+    }
+
+    sendInChunks(buffer) {
+        const chunkSize = 640; // 320 samples * 2 bytes
+        let offset = 0;
+
+        const sendChunk = () => {
+            if (offset >= buffer.length) {
+                return;
+            }
+
+            const chunk = buffer.slice(offset, offset + chunkSize);
+            this.ws.send(chunk);
+            offset += chunkSize;
+
+            setTimeout(sendChunk, 20);
+        };
+
+        sendChunk();
+    }
+
+    convertToInt16(audioBuffer) {
+        const samples = audioBuffer.getChannelData(0);
+        const int16Array = new Int16Array(samples.length);
+        for (let i = 0; i < samples.length; i++) {
+            int16Array[i] = samples[i] * 32767;
+        }
+        return Buffer.from(int16Array.buffer);
+    }
 }
+
+// Usage
+const client = new AudioClient();
+client.sendWavFile();
+// or client.sendAudioFile('input.mp3');
+// or client.sendRawPCM();
 ```
 
 ```python Python.py
 # Backend WebSocket Client (Python)
 import asyncio
 import websockets
-import json
-import ssl
+import numpy as np
+from scipy.io import wavfile
+import soundfile as sf
 
-async def connect_to_server():
+async def send_audio_data():
+    # Connection parameters
     uri = "wss://api-dev.meeamitech.com/audio/v1/uploads/stream?sampleRate=16000&noiseSuppression=1&gainControl=1&backgroundVoiceSuppression=1"
-    ssl_context = ssl.create_default_context()
-    
-    headers = {
-        'Authorization': 'Bearer your-backend-api-key'
-    }
-    
-    async with websockets.connect(
-        uri,
-        extra_headers=headers,
-        ssl=ssl_context
-    ) as websocket:
-        try:
-            while True:
-                # Send data
-                await websocket.send(your_data)
-                
-                # Receive data
-                response = await websocket.recv()
-                print(f"Received: {response}")
-                
-        except websockets.exceptions.ConnectionClosed:
-            print("Connection closed")
-        except Exception as e:
-            print(f"Error: {e}")
+    api_key = "YOUR_API_KEY"  # Replace with your actual API key
 
+    headers = {
+        "Authorization": f"Bearer {api_key}"
+    }
+
+    async with websockets.connect(uri, extra_headers=headers) as websocket:
+        # Example 1: Send synthetic audio data
+        sample_rate = 16000
+        duration = 1  # seconds
+        t = np.linspace(0, duration, sample_rate * duration)
+        audio_data = (np.sin(2 * np.pi * 440 * t) * 32767).astype(np.int16)
+
+        # Example 2: Read from WAV file
+        sample_rate, wav_data = wavfile.read('input.wav')
+        audio_data = wav_data.astype(np.int16)
+
+        # Example 3: Read from other audio formats using soundfile
+        audio_data, sample_rate = sf.read('input.mp3')
+        audio_data = (audio_data * 32767).astype(np.int16)  # Normalize and convert to int16
+
+        # Send audio data in chunks
+        chunk_size = 320  # matches server's framesz
+        for i in range(0, len(audio_data), chunk_size):
+            chunk = audio_data[i:i + chunk_size]
+            await websocket.send(chunk.tobytes())
+
+            # Receive and process the audio
+            processed_audio = await websocket.recv()
+            processed_chunk = np.frombuffer(processed_audio, dtype=np.int16)
+            # Do something with processed_chunk...
+
+# Run the client
 if __name__ == "__main__":
+    asyncio.run(send_audio_data())
     asyncio.run(connect_to_server())
 ```
 
 ```Java Java.java
-// Backend WebSocket Client (Java)
-import java.net.URI;
-import javax.websocket.*;
+import javax.sound.sampled.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @ClientEndpoint
-public class WebSocketClient {
+public class AudioWebSocketClient {
+    private static final String URI = "wss://api-dev.meeamitech.com/audio/v1/uploads/stream?sampleRate=16000&noiseSuppression=1&gainControl=1&backgroundVoiceSuppression=1";
+    private static final String API_KEY = "YOUR_API_KEY";
     private Session session;
-    
-    public WebSocketClient() {
+    private final BlockingQueue<byte[]> audioQueue = new LinkedBlockingQueue<>();
+
+    // Example 1: Send microphone input
+    public void startMicrophoneCapture() {
         try {
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            ClientEndpointConfig config = ClientEndpointConfig.Builder.create()
-                .configurator(new ClientEndpointConfig.Configurator() {
-                    @Override
-                    public void beforeRequest(Map<String, List<String>> headers) {
-                        headers.put("Authorization", 
-                            Arrays.asList("Bearer your-backend-api-key"));
+            AudioFormat format = new AudioFormat(16000, 16, 1, true, true);
+            DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+
+            if (!AudioSystem.isLineSupported(info)) {
+                throw new LineUnavailableException("Line not supported");
+            }
+
+            TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
+            line.open(format);
+            line.start();
+
+            Thread captureThread = new Thread(() -> {
+                byte[] buffer = new byte[640];
+                while (true) {
+                    int count = line.read(buffer, 0, buffer.length);
+                    if (count > 0) {
+                        audioQueue.offer(buffer.clone());
                     }
-                }).build();
-            
-            container.connectToServer(this, 
-                config,
-                new URI("wss://api-dev.meeamitech.com/audio/v1/uploads/stream?sampleRate=16000&noiseSuppression=1&gainControl=1&backgroundVoiceSuppression=1"));
-                
+                }
+            });
+            captureThread.start();
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Example 2: Send WAV file
+    public void sendWavFile(String filePath) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath));
+            AudioFormat format = audioInputStream.getFormat();
+
+            // Convert to required format if necessary
+            if (!format.matches(new AudioFormat(16000, 16, 1, true, true))) {
+                AudioFormat targetFormat = new AudioFormat(16000, 16, 1, true, true);
+                audioInputStream = AudioSystem.getAudioInputStream(targetFormat, audioInputStream);
+            }
+
+            byte[] buffer = new byte[640];
+            int bytesRead;
+            while ((bytesRead = audioInputStream.read(buffer)) != -1) {
+                if (session.isOpen()) {
+                    session.getBasicRemote().sendBinary(ByteBuffer.wrap(buffer, 0, bytesRead));
+                    Thread.sleep(20);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    // ... rest of the implementation remains the same ...
+
+    // Example 3: Send synthetic audio
+    public void sendSyntheticAudio() {
+        try {
+            // Generate a 440Hz sine wave
+            double frequency = 440;
+            double sampleRate = 16000;
+            double amplitude = 32767;
+            double duration = 1.0; // seconds
+
+            int numSamples = (int) (sampleRate * duration);
+            ByteBuffer buffer = ByteBuffer.allocate(numSamples * 2);
+            buffer.order(ByteOrder.BIG_ENDIAN);
+
+            for (int i = 0; i < numSamples; i++) {
+                double time = i / sampleRate;
+                short sample = (short) (amplitude * Math.sin(2 * Math.PI * frequency * time));
+                buffer.putShort(sample);
+            }
+
+            byte[] audioData = buffer.array();
+            int chunkSize = 640;
+
+            for (int i = 0; i < audioData.length; i += chunkSize) {
+                int size = Math.min(chunkSize, audioData.length - i);
+                byte[] chunk = Arrays.copyOfRange(audioData, i, i + size);
+                session.getBasicRemote().sendBinary(ByteBuffer.wrap(chunk));
+                Thread.sleep(20);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @OnMessage
+    public void onMessage(ByteBuffer message) {
+        byte[] processedAudio = new byte[message.remaining()];
+        message.get(processedAudio);
+        // Handle processed audio...
+    }
+
+    // Other methods (connect, onClose, etc.) remain the same...
 }
 ```
 </CodeGroup>
