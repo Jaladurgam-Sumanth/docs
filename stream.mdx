@@ -15,45 +15,6 @@ title: 'Stream'
 - **Frontend:** API key in the first message
 
 ---
-### Frontend to Backend
-
-```javascript Client.js
-// Frontend WebSocket Client (JavaScript)
-function connectWebSocket() {
-    const ws = new WebSocket('wss://api-dev.meeamitech.com/audio/v1/uploads/stream?sampleRate=16000&noiseSuppression=1&gainControl=1&backgroundVoiceSuppression=1');
-    
-    ws.onopen = function() {
-        console.log('WebSocket connection established');
-        // Send authentication as first message
-        ws.send(JSON.stringify({
-            type: 'auth',
-            apiKey: 'your-frontend-api-key'
-        }));
-    };
-
-    ws.onmessage = function(event) {
-        // Handle auth response
-        try {
-            const data = JSON.parse(event.data);
-            if (data.type === 'auth') {
-                console.log('Auth status:', data.status);
-                return;
-            }
-            // Handle other messages
-        } catch (error) {
-            console.error('Error processing message:', error);
-        }
-    };
-
-    ws.onerror = function(error) {
-        console.error('WebSocket error:', error);
-    };
-
-    ws.onclose = function(event) {
-        console.log('Connection closed:', event.code, event.reason);
-    };
-}
-```
 
 ### Backend to Backend
 
