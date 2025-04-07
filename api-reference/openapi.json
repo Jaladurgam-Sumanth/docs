@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "https://628e-202-53-12-234.ngrok-free.app"
+            "url": "https://api-dev.meeamitech.com"
         }
     ],
     "security": [
